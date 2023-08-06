@@ -1,22 +1,18 @@
 #include <Arduino.h>
 #include "TFT_eSPI.h"
-#include <stevesch-MathBase.h>
-#include <stevesch-MathVec.h>
-using stevesch::vector3;
-vector3 a(2.0f, 3.0f, 5.0f);
-
-
-TFT_eSPI tft = TFT_eSPI();
+#include "buffer.h"
 
 void setup() {
   Serial.begin(115200);
-  tft.init();
-  tft.setRotation(1);
-  tft.fillScreen(TFT_BLACK);
+  initBuffer();
   tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-
+  delay(10000);
 }
 
 void loop() {
-
+  setCurrentColorBuffer(Color(255, 255, 255));
+  triangleBuffer(vector3(10, 10, -10), vector3(-10, 10, -10), vector3(10, -10, -10));
+  renderBuffer();
+  tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
+  delay(10000);
 }
