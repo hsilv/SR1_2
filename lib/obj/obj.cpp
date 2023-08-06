@@ -48,8 +48,10 @@ bool loadOBJ(const std::string &path, std::vector<vector3> &out_vertices)
     }
     else
     {
-        out_vertices.reserve(counterV * counterF * 3);
+        out_vertices.reserve(counterF * 3);
         obj.seek(0);
+
+        Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
 
         std::vector<vector3> temp_vertices;
         temp_vertices.reserve(counterV);

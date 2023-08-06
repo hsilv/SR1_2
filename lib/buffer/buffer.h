@@ -25,6 +25,6 @@ void pointBuffer(const Vertex3& vertex, size_t width, size_t height);
 void setClearColorBuffer(Color newColor);
 void setCurrentColorBuffer(Color newColor);
 void lineBuffer(vector3 start, vector3 end);
-void triangleBuffer(vector3 A, vector3  B, vector3 C);
+void triangleBuffer(vector3 A, vector3 B, vector3 C, float angle);
 
 #endif

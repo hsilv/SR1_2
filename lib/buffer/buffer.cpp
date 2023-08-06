@@ -1,18 +1,62 @@
 #pragma once
 #include "buffer.h"
+#include "uniform.h"
+#include <stevesch-MathBase.h>
+#include <stevesch-MathVec.h>
+using stevesch::matrix4;
+using stevesch::vector4;
 
 Color clearColor(0, 0, 0);
 Color currentColor(0, 0, 0);
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite spr = TFT_eSprite(&tft);
 
+
+float counter = 0;
+
+vector3 rotateZ(vector3 vertex, float angle)
+{
+    matrix4 rotationZ;
+    rotationZ.zMatrix(angle);
+    vector4 rotatedZ = rotationZ * vector4(vertex.x, vertex.y, vertex.z, 1);
+    return vector3(rotatedZ.x, rotatedZ.y, rotatedZ.z);
+}
+
+vector3 rotateY(vector3 vertex, float angle)
+{
+    matrix4 rotationY;
+    rotationY.yMatrix(angle);
+    vector4 rotatedY = rotationY * vector4(vertex.x, vertex.y, vertex.z, 1);
+    return vector3(rotatedY.x, rotatedY.y, rotatedY.z);
+}
+
 void clearBuffer()
 {
     spr.fillSprite(clearColor.toHex());
 }
 
-void renderBuffer(const std::vector<vector3>& vertices)
+void renderBuffer(const std::vector<vector3> &vertices)
 {
+    clearBuffer();
+    /* for(int i = 0; i < vertices.size(); i = i + 3){
+        triangleBuffer(vertices.at(i)*20 + vector3(counter, counter, 0), vertices.at(i+1)*20 + vector3(counter, counter, 0), vertices.at(i+2)*20 + vector3(counter, counter, 0));
+    }
+    counter++; */
+
+    counter += 0.1; // Puedes ajustar el valor para cambiar la velocidad de rotación
+
+    for (int i = 0; i < vertices.size(); i += 3)
+    {
+        triangleBuffer(
+            vertices.at(i) * 10,
+            vertices.at(i + 1) * 10,
+            vertices.at(i + 2) * 10,
+            counter // Pasar el ángulo actual de rotación
+        );
+    }
+
+    Uniforms uniforms;
+
     // 1. Vertex Shader
     // 2. Primitive Assembly
     // 3. Rasterization
@@ -109,8 +153,13 @@ void lineBuffer(vector3 start, vector3 end)
     }
 }
 
-void triangleBuffer(vector3 A, vector3 B, vector3 C)
+void triangleBuffer(vector3 A, vector3 B, vector3 C, float angle)
 {
+    // Aplicar la rotación alrededor del eje z (plano xy) a cada vértice
+    A = rotateY(A, angle);
+    B = rotateY(B, angle);
+    C = rotateY(C, angle);
+
     lineBuffer(A, B);
     lineBuffer(B, C);
     lineBuffer(C, A);
