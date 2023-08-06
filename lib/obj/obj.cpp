@@ -72,7 +72,6 @@ bool loadOBJ(const std::string &path, std::vector<vector3> &out_vertices)
                     double x, y, z;
                     if (sscanf(buffer, "v %lf %lf %lf", &x, &y, &z) == 3)
                     {
-                        Serial.println("Agregando vértices");
                         vector3 temp(x, y, z);
                         temp_vertices.push_back(temp);
                     }
@@ -85,7 +84,6 @@ bool loadOBJ(const std::string &path, std::vector<vector3> &out_vertices)
                     sscanf(buffer, "f %d/%d/%d %d/%d/%d %d/%d/%d", &face_indices[0], &face_indices[1], &face_indices[2], &face_indices2[0], &face_indices2[1], &face_indices2[2], &face_indices3[0], &face_indices3[1], &face_indices3[2]);
                     if (sscanf(buffer, "f %d/%d/%d %d/%d/%d %d/%d/%d", &face_indices[0], &face_indices[1], &face_indices[2], &face_indices2[0], &face_indices2[1], &face_indices2[2], &face_indices3[0], &face_indices3[1], &face_indices3[2]) == 9)
                     {
-                        Serial.println("Agregando caras");
                         for (int i = 0; i < 3; i++)
                         {
                             face_indices[i] -= 1;

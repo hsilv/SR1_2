@@ -11,8 +11,12 @@ void clearBuffer()
     spr.fillSprite(clearColor.toHex());
 }
 
-void renderBuffer()
+void renderBuffer(const std::vector<vector3>& vertices)
 {
+    // 1. Vertex Shader
+    // 2. Primitive Assembly
+    // 3. Rasterization
+    // 4. Fragment Shader
     spr.pushSprite(0, 0);
 }
 

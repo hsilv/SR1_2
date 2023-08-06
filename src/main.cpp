@@ -19,7 +19,7 @@ void loop()
 {
   setCurrentColorBuffer(Color(255, 255, 255));
   for(int i = 0; i < vertexes.size(); i = i+3){
-    triangleBuffer(vertexes.at(i), vertexes.at(i+1), vertexes.at(i+2));
+    triangleBuffer(vertexes.at(i)*20, vertexes.at(i+1)*20, vertexes.at(i+2)*20);
   }
   renderBuffer();
 }

@@ -19,7 +19,7 @@ struct Face {
   std::vector<std::array<int, 3>> vertices;
 };
 void clearBuffer();
-void renderBuffer();
+void renderBuffer(const std::vector<vector3>& vertices);
 void initBuffer();
 void pointBuffer(const Vertex3& vertex, size_t width, size_t height);
 void setClearColorBuffer(Color newColor);
