@@ -1,18 +1,25 @@
 #include <Arduino.h>
 #include "TFT_eSPI.h"
 #include "buffer.h"
+#include "read.h"
+#include "obj.h"
 
-void setup() {
+std::vector<vector3> vertexes;
+
+void setup()
+{
   Serial.begin(115200);
   initBuffer();
+  setupSD();
+  loadOBJ("/cube.obj", vertexes);
   tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-  delay(10000);
 }
 
-void loop() {
+void loop()
+{
   setCurrentColorBuffer(Color(255, 255, 255));
-  triangleBuffer(vector3(10, 10, -10), vector3(-10, 10, -10), vector3(10, -10, -10));
+  for(int i = 0; i < vertexes.size(); i = i+3){
+    triangleBuffer(vertexes.at(i), vertexes.at(i+1), vertexes.at(i+2));
+  }
   renderBuffer();
-  tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-  delay(10000);
 }
