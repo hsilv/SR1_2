@@ -22,13 +22,26 @@ matrix4 createViewMatrix()
 {
     matrix4 viewMatrix;
     viewMatrix = matrix4::lookAt(
-        //¿Donde está?
+        // ¿Donde está?
         vector3(0, 0, -5),
-        //¿A dónde mira?
+        // ¿A dónde mira?
         vector3(0, 0, 0),
-        //¿Qué es arriba para ella?
+        // ¿Qué es arriba para ella?
         vector3(0, 1, 0));
     return viewMatrix;
+}
+
+matrix4 createProjectionMatrix(int wWidth, int wHeight)
+{
+    matrix4 perspective;
+    float fovInDegrees = 45.0f;
+    float aspectRatio = wWidth / wHeight;
+    float nearClip = 0.1f;
+    float farClip = 100.0f;
+
+    perspective.perspective(radians(fovInDegrees), aspectRatio, nearClip, farClip);
+
+    return perspective;
 }
 
 void printMatrix(matrix4 matrix)

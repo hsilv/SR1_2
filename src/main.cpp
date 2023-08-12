@@ -20,7 +20,8 @@ void setup()
   tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
   uniform.model = createModelMatrix();
   uniform.view = createViewMatrix();
-  printMatrix(uniform.view);
+  uniform.projection = createProjectionMatrix(1280, 1024);
+  printMatrix(uniform.projection);
 }
 
 void loop()
