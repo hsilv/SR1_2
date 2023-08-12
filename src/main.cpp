@@ -3,8 +3,11 @@
 #include "buffer.h"
 #include "read.h"
 #include "obj.h"
+#include "matrixes.h"
+#include "uniform.h"
 
 std::vector<vector3> vertexes;
+Uniforms uniform;
 
 void setup()
 {
@@ -12,8 +15,12 @@ void setup()
   initBuffer();
   tft.println("Leyendo tarjeta SD...");
   setupSD();
-  Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
+  tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
   loadOBJ("/only_body.obj", vertexes);
+  tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
+  uniform.model = createModelMatrix();
+  uniform.view = createViewMatrix();
+  printMatrix(uniform.view);
 }
 
 void loop()

@@ -30,6 +30,14 @@ vector3 rotateY(vector3 vertex, float angle)
     return vector3(rotatedY.x, rotatedY.y, rotatedY.z);
 }
 
+vector3 rotateX(vector3 vertex, float angle)
+{
+    matrix4 rotationX;
+    rotationX.xMatrix(angle);
+    vector4 rotatedX = rotationX * vector4(vertex.x, vertex.y, vertex.z, 1);
+    return vector3(rotatedX.x, rotatedX.y, rotatedX.z);
+}
+
 void clearBuffer()
 {
     spr.fillSprite(clearColor.toHex());
@@ -44,13 +52,16 @@ void renderBuffer(const std::vector<vector3> &vertices)
     counter++; */
 
     counter += 0.1; // Puedes ajustar el valor para cambiar la velocidad de rotación
+    if(counter >= PI*2){
+        counter = 0;
+    }
 
     for (int i = 0; i < vertices.size(); i += 3)
     {
         triangleBuffer(
-            vertices.at(i) * 10,
-            vertices.at(i + 1) * 10,
-            vertices.at(i + 2) * 10,
+            vertices.at(i) * 8,
+            vertices.at(i + 1) * 8,
+            vertices.at(i + 2) * 8,
             counter // Pasar el ángulo actual de rotación
         );
     }
@@ -156,9 +167,9 @@ void lineBuffer(vector3 start, vector3 end)
 void triangleBuffer(vector3 A, vector3 B, vector3 C, float angle)
 {
     // Aplicar la rotación alrededor del eje z (plano xy) a cada vértice
-    A = rotateY(A, angle);
-    B = rotateY(B, angle);
-    C = rotateY(C, angle);
+    A = rotateX(A, angle);
+    B = rotateX(B, angle);
+    C = rotateX(C, angle);
 
     lineBuffer(A, B);
     lineBuffer(B, C);

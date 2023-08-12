@@ -8,6 +8,7 @@ struct Uniforms {
   matrix4 model;
   matrix4 view;
   matrix4 projection;
+  matrix4 viewport;
 };
 
 #endif
