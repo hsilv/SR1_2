@@ -12,7 +12,7 @@ matrix4 createModelMatrix()
 
     matrix4 rotation = matrix4(1);
     /* rotation.rotate(radians((3.14f / 3.0f) + 1.0f), vector3(0.0f, 1.0f, 0.0f)); */
-    rotation.yMatrix(radians((3.14f / 3.0f) + 1.0f));
+    rotation.rotate(radians((3.14f / 3.0f) + 1.0f), vector3(0.0f, 1.0f, 0.0f));
     /* rotation.xMatrix(radians((3.14f / 3.0f) + 1.0f)); */
 
     return translation * scale * rotation;
@@ -50,7 +50,6 @@ matrix4 createViewportMatrix(int wWidth, int wHeight)
     viewport.scale(wWidth / 2.0f, wHeight / 2.0f, 0.5f);
 
     viewport.translate(1.0f, 1.0f, 0.5f);
-    printMatrix(viewport);
     return viewport;
 }
 

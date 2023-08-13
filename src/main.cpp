@@ -19,9 +19,13 @@ void setup()
   loadOBJ("/only_body.obj", vertexes);
   tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
   uniform.model = createModelMatrix();
+  printMatrix(uniform.model);
   uniform.view = createViewMatrix();
+  printMatrix(uniform.view);
   uniform.projection = createProjectionMatrix(1280, 1024);
+  printMatrix(uniform.projection);
   uniform.viewport = createViewportMatrix(1280, 1024);
+  printMatrix(uniform.viewport);
 }
 
 void loop()
