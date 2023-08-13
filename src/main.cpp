@@ -21,7 +21,7 @@ void setup()
   uniform.model = createModelMatrix();
   uniform.view = createViewMatrix();
   uniform.projection = createProjectionMatrix(1280, 1024);
-  printMatrix(uniform.projection);
+  uniform.viewport = createViewportMatrix(1280, 1024);
 }
 
 void loop()
