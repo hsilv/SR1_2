@@ -26,7 +26,7 @@ struct Face {
   std::vector<std::array<int, 3>> vertices;
 };
 void clearBuffer();
-void renderBuffer(const std::vector<vector3>& vertices);
+void renderBuffer(const std::vector<vector3>& vertices, Uniforms &u, int wWidth, int wHeight);
 void initBuffer();
 void pointBuffer(const Fragment &f);
 void setClearColorBuffer(Color newColor);

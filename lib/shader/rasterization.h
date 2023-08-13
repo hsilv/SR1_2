@@ -8,7 +8,8 @@
 #include "triangle.h"
 #include <stevesch-MathBase.h>
 #include <stevesch-MathVec.h>
+#include <TFT_eSPI.h>
 
-std::vector<Fragment> rasterize(const std::vector<std::vector<Vertex>> &triangles);
+std::vector<Fragment> rasterize(const std::vector<std::vector<Vertex>> &triangles, void (*func)(const Fragment &));
 
 #endif

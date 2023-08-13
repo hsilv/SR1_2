@@ -8,13 +8,17 @@ TFT_eSprite spr = TFT_eSprite(&tft);
 
 float counter = 0;
 
+std::vector<std::vector<int>> zbuffer;
+
 void clearBuffer()
 {
     spr.fillSprite(clearColor.toHex());
 }
 
-void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u)
+void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth, int wHeight)
 {
+
+    zbuffer = std::vector<std::vector<int>>(tft.height(), std::vector<int>(tft.width(), std::numeric_limits<int>::max()));
     std::vector<Vertex> transformedVertices;
 
     clearBuffer();
@@ -37,17 +41,20 @@ void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u)
     transformedVertices.shrink_to_fit();
 
     //3. Rasterization
-    std::vector<Fragment> fragments = rasterize(triangles);
+    rasterize(triangles, pointBuffer);
 
     triangles.clear();
     triangles.shrink_to_fit();
 
     // 4. Fragment Shader
-    for(Fragment fragment: fragments){
+   /*  for(Fragment fragment: fragments){
         pointBuffer(fragment);
-    };
+    }; */
+
 
     spr.pushSprite(0, 0);
+    zbuffer.clear();
+    zbuffer.shrink_to_fit();
 }
 
 void initBuffer()
@@ -64,10 +71,13 @@ void pointBuffer(const Fragment &f)
     int y = static_cast<int>(f.position.y);
     int z = static_cast<int>(f.position.z);
 
-    if (x >= 0 && x < static_cast<int>(spr.width()) && y >= 0 && y < static_cast<int>(spr.height()))
+    if (x >= 0 && x < static_cast<int>(spr.width()) && y >= 0 && y < static_cast<int>(spr.height()) && z < zbuffer[y][x])
     {
+        /* Serial.printf("Color: %i %i %i \n", f.color.getRed(), f.color.getGreen(), f.color.getBlue());
+        Serial.printf("Position: %lf %lf %lf \n", f.position.x, f.position.y, f.position.z); */
         setCurrentColorBuffer(f.color);
         spr.drawPixel(x, y, currentColor.toHex());
+        zbuffer[y][x] = z;
     }
 }
 

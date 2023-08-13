@@ -1,6 +1,6 @@
 #include "rasterization.h"
 
-std::vector<Fragment> rasterize(const std::vector<std::vector<Vertex>> &triangles){
+std::vector<Fragment> rasterize(const std::vector<std::vector<Vertex>> &triangles, void (*func)(const Fragment &)){
 
     std::vector<Fragment> fragments;
     for (const std::vector<Vertex> triangleVertices: triangles){
@@ -10,12 +10,11 @@ std::vector<Fragment> rasterize(const std::vector<std::vector<Vertex>> &triangle
             triangleVertices[2]
         );
 
-        fragments.insert(
-            fragments.end(),
-            rasterizedTriangle.begin(),
-            rasterizedTriangle.end()
-        );
+        for(Fragment frag: rasterizedTriangle){
+            func(frag);
+        }
     }
+
 
     return fragments;
 }

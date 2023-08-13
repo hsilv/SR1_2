@@ -1,19 +1,15 @@
 #include "matrixes.h"
-using stevesch::vector3;
-using stevesch::vector4;
 
-matrix4 createModelMatrix()
+matrix4 createModelMatrix(vector3 translateV, vector3 scaleV, vector3 rotationV, float rotationD)
 {
     matrix4 translation = matrix4(1);
-    translation.translate(0.0f, 0.0f, 0.0f);
+    translation.translate(translateV.x, translateV.y, translateV.z);
 
     matrix4 scale = matrix4(1);
-    scale.scale(2.0f, 1.0f, 2.0f);
+    scale.scale(scaleV.x, scaleV.y, scaleV.z);
 
     matrix4 rotation = matrix4(1);
-    /* rotation.rotate(radians((3.14f / 3.0f) + 1.0f), vector3(0.0f, 1.0f, 0.0f)); */
-    rotation.rotate(radians((3.14f / 3.0f) + 1.0f), vector3(0.0f, 1.0f, 0.0f));
-    /* rotation.xMatrix(radians((3.14f / 3.0f) + 1.0f)); */
+    rotation.rotate(radians(rotationD), rotationV);
 
     return translation * scale * rotation;
 }

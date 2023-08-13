@@ -5,6 +5,7 @@ std::vector<Fragment> triangle(Vertex a, Vertex b, Vertex c)
     vector3 A = a.position;
     vector3 B = b.position;
     vector3 C = c.position;
+    int counter = 0;
 
     std::vector<Fragment> triangleFragments;
 
@@ -26,9 +27,35 @@ std::vector<Fragment> triangle(Vertex a, Vertex b, Vertex c)
                 bar.y <= 1 && bar.y >= 0 &&
                 bar.z <= 1 && bar.z >= 0)
             {
+                /* Color color = a.color * bar.x + b.color * bar.y + c.color * bar.z;
+
+                P.z = a.position.z * bar.x + b.position.z * bar.y + c.position.z * bar.z; */
+
+                counter++;
+                /* triangleFragments.push_back(
+                    Fragment{P, color}); */
+            }
+        }
+    }
+
+    triangleFragments.reserve(counter);
+
+    for (float y = minY; y <= maxY; y++)
+    {
+        for (float x = minX; x <= maxX; x++)
+        {
+            vector3 P = vector3(x, y, 0);
+
+            vector3 bar = barycentricCoordinates(P, A, B, C);
+
+            if (
+                bar.x <= 1 && bar.x >= 0 &&
+                bar.y <= 1 && bar.y >= 0 &&
+                bar.z <= 1 && bar.z >= 0)
+            {
                 Color color = a.color * bar.x + b.color * bar.y + c.color * bar.z;
 
-                P.z = a.position.z * bar.x + b.position.z * bar.y + c.position.z * bar.z;
+                P.z = a.position.z * bar.x + b.position.z * bar.y + c.position.z * bar.z; 
 
                 triangleFragments.push_back(
                     Fragment{P, color});
