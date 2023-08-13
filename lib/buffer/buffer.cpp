@@ -6,9 +6,11 @@ Color currentColor(0, 0, 0);
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite spr = TFT_eSprite(&tft);
 
+int faceC = 0;
+
 float counter = 0;
 
-std::vector<std::vector<int>> zbuffer;
+std::vector<std::vector<float>> zbuffer;
 
 void clearBuffer()
 {
@@ -17,8 +19,8 @@ void clearBuffer()
 
 void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth, int wHeight)
 {
+    zbuffer = std::vector<std::vector<float>>(tft.height(), std::vector<float>(tft.width(), std::numeric_limits<float>::max()));
 
-    zbuffer = std::vector<std::vector<int>>(tft.height(), std::vector<int>(tft.width(), std::numeric_limits<int>::max()));
     std::vector<Vertex> transformedVertices;
 
     clearBuffer();
@@ -40,17 +42,16 @@ void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth,
     transformedVertices.clear();
     transformedVertices.shrink_to_fit();
 
-    //3. Rasterization
+    // 3. Rasterization
     rasterize(triangles, pointBuffer);
 
     triangles.clear();
     triangles.shrink_to_fit();
 
     // 4. Fragment Shader
-   /*  for(Fragment fragment: fragments){
-        pointBuffer(fragment);
-    }; */
-
+    /*  for(Fragment fragment: fragments){
+         pointBuffer(fragment);
+     }; */
 
     spr.pushSprite(0, 0);
     zbuffer.clear();
@@ -69,15 +70,15 @@ void pointBuffer(const Fragment &f)
 {
     int x = static_cast<int>(f.position.x);
     int y = static_cast<int>(f.position.y);
-    int z = static_cast<int>(f.position.z);
 
-    if (x >= 0 && x < static_cast<int>(spr.width()) && y >= 0 && y < static_cast<int>(spr.height()) && z < zbuffer[y][x])
+    if (x >= 0 && x < static_cast<int>(spr.width()) && y >= 0 && y < static_cast<int>(spr.height()))
     {
-        /* Serial.printf("Color: %i %i %i \n", f.color.getRed(), f.color.getGreen(), f.color.getBlue());
-        Serial.printf("Position: %lf %lf %lf \n", f.position.x, f.position.y, f.position.z); */
-        setCurrentColorBuffer(f.color);
-        spr.drawPixel(x, y, currentColor.toHex());
-        zbuffer[y][x] = z;
+        if (f.position.z < zbuffer[y][x])
+        {
+            setCurrentColorBuffer(f.color);
+            spr.drawPixel(x, y, currentColor.toHex());
+            zbuffer[y][x] = f.position.z;
+        }
     }
 }
 
