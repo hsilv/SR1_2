@@ -28,7 +28,7 @@ void setup()
   tft.println("Leyendo tarjeta SD...");
   setupSD();
   tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-  loadOBJ("/cube.obj", vertexes);
+  loadOBJ("/only_body.obj", vertexes);
   wWidth = tft.width();
   wHeight = tft.height();
 
@@ -36,7 +36,7 @@ void setup()
 
 void loop()
 {
-  uniform.model = createModelMatrix(vector3(0.0f, 0.0f, 0.0f), vector3(0.65f, 0.7f, 0.7f), vector3(0.0f, 1.0f, 0.0f), angle+=2);
+  uniform.model = createModelMatrix(vector3(0.0f, 0.0f, 0.0f), vector3(0.23f, 0.23f, 0.23f), vector3(1.0f, 0.0f, 0.0f), angle+=1);
   uniform.view = createViewMatrix();
   uniform.projection = createProjectionMatrix(wWidth, wHeight);
   uniform.viewport = createViewportMatrix(wWidth, wHeight);

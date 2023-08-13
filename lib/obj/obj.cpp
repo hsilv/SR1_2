@@ -48,7 +48,7 @@ bool loadOBJ(const std::string &path, std::vector<vector3> &out_vertices)
     }
     else
     {
-        out_vertices.reserve(counterF * 3 * 2);
+        out_vertices.reserve(counterF * 3 /* * 2 */);
         obj.seek(0);
         
         std::vector<vector3> temp_vertices;
@@ -91,11 +91,11 @@ bool loadOBJ(const std::string &path, std::vector<vector3> &out_vertices)
                             face_indices3[i] -= 1;
                         }
                         out_vertices.push_back(temp_vertices.at(face_indices[0]));
-                        out_vertices.push_back(vector3(1.0f, 0.0f, 0.0f));
+                        /* out_vertices.push_back(vector3(1.0f, 0.0f, 0.0f)); */
                         out_vertices.push_back(temp_vertices.at(face_indices2[0]));
-                        out_vertices.push_back(vector3(0.0f, 1.0f, 0.0f));
+                        /* out_vertices.push_back(vector3(0.0f, 1.0f, 0.0f)); */
                         out_vertices.push_back(temp_vertices.at(face_indices3[0]));
-                        out_vertices.push_back(vector3(0.0f, 0.0f, 1.0f));
+                        /* out_vertices.push_back(vector3(0.0f, 0.0f, 1.0f)); */
                     }
                 }
             }

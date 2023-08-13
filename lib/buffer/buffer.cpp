@@ -19,42 +19,87 @@ void clearBuffer()
 
 void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth, int wHeight)
 {
+
     zbuffer = std::vector<std::vector<float>>(tft.height(), std::vector<float>(tft.width(), std::numeric_limits<float>::max()));
 
-    std::vector<Vertex> transformedVertices;
-
     clearBuffer();
-
-    transformedVertices.reserve(vertices.size() / 2);
-
-    // 1. Vertex Shader
-    for (int i = 0; i < vertices.size(); i += 2)
+    for (int z = 0; z < vertices.size(); z += 3)
     {
-        vector3 v = vertices[i];
-        vector3 c = vertices[i + 1];
+        std::vector<Vertex> transformedVertices;
+        transformedVertices.reserve(3);
+        /* Serial.printf("Triángulo número %i \n", z / 3); */
 
-        Vertex vertex = {v, Color(c.x, c.y, c.z)};
-        Vertex transformedVertex = vertexShader(vertex, u);
-        transformedVertices.push_back(transformedVertex);
+        for (int i = 0; i < 3; i += 1)
+        {
+            vector3 v = vertices[z + i];
+            vector3 c = vector3(1.0f, 0.0f, 0.0f);
+
+            if (i == 0)
+            {
+                c = vector3(1.0f, 0.0f, 0.0f);
+            }
+            else if (i == 1)
+            {
+                c = vector3(0.0f, 1.0f, 0.0f);
+            }
+            else if (i == 2)
+            {
+                c = vector3(0.0f, 0.0f, 1.0f);
+            }
+
+            Vertex vertex = {v, Color(c.x, c.y, c.z)};
+            Vertex transformedVertex = vertexShader(vertex, u);
+            transformedVertices.push_back(transformedVertex);
+        }
+
+        /* Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT)); */
+
+        std::vector<std::vector<Vertex>> triangles = primitiveAssembly(transformedVertices);
+
+        transformedVertices.clear();
+        transformedVertices.shrink_to_fit();
+
+        rasterize(triangles, pointBuffer);
+
+        triangles.clear();
+        triangles.shrink_to_fit();
     }
 
-    Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-
-    // 2. Primitive Assembly
-    std::vector<std::vector<Vertex>> triangles = primitiveAssembly(transformedVertices);
-
-    transformedVertices.clear();
-    transformedVertices.shrink_to_fit();
-
-    // 3. Rasterization
-    rasterize(triangles, pointBuffer);
-
-    triangles.clear();
-    triangles.shrink_to_fit();
-
     spr.pushSprite(0, 0);
-    /*     zbuffer.clear();
-        zbuffer.shrink_to_fit(); */
+    /*  std::vector<Vertex> transformedVertices;
+
+     clearBuffer();
+
+     transformedVertices.reserve(vertices.size() / 2);
+
+     // 1. Vertex Shader
+     for (int i = 0; i < vertices.size(); i += 2)
+     {
+         vector3 v = vertices[i];
+         vector3 c = vertices[i + 1];
+
+         Vertex vertex = {v, Color(c.x, c.y, c.z)};
+         Vertex transformedVertex = vertexShader(vertex, u);
+         transformedVertices.push_back(transformedVertex);
+     }
+
+     Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
+
+     // 2. Primitive Assembly
+     std::vector<std::vector<Vertex>> triangles = primitiveAssembly(transformedVertices);
+
+     transformedVertices.clear();
+     transformedVertices.shrink_to_fit();
+
+     // 3. Rasterization
+     rasterize(triangles, pointBuffer);
+
+     triangles.clear();
+     triangles.shrink_to_fit(); */
+
+    zbuffer.clear();
+    zbuffer.shrink_to_fit();
+    /* zbuffer.clear(); */
 }
 
 void initBuffer()
