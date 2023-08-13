@@ -25,6 +25,8 @@ void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth,
 
     clearBuffer();
 
+    transformedVertices.reserve(vertices.size() / 2);
+
     // 1. Vertex Shader
     for (int i = 0; i < vertices.size(); i += 2)
     {
@@ -35,6 +37,8 @@ void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth,
         Vertex transformedVertex = vertexShader(vertex, u);
         transformedVertices.push_back(transformedVertex);
     }
+
+    Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
 
     // 2. Primitive Assembly
     std::vector<std::vector<Vertex>> triangles = primitiveAssembly(transformedVertices);
@@ -48,14 +52,9 @@ void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth,
     triangles.clear();
     triangles.shrink_to_fit();
 
-    // 4. Fragment Shader
-    /*  for(Fragment fragment: fragments){
-         pointBuffer(fragment);
-     }; */
-
     spr.pushSprite(0, 0);
-    zbuffer.clear();
-    zbuffer.shrink_to_fit();
+    /*     zbuffer.clear();
+        zbuffer.shrink_to_fit(); */
 }
 
 void initBuffer()
@@ -75,8 +74,7 @@ void pointBuffer(const Fragment &f)
     {
         if (f.position.z < zbuffer[y][x])
         {
-            setCurrentColorBuffer(f.color);
-            spr.drawPixel(x, y, currentColor.toHex());
+            spr.drawPixel(x, y, f.color.toHex());
             zbuffer[y][x] = f.position.z;
         }
     }
@@ -91,72 +89,3 @@ void setCurrentColorBuffer(Color newColor)
 {
     currentColor = newColor;
 }
-
-/* void lineBuffer(vector3 start, vector3 end)
-{
-    int screenWidth = tft.width();
-    int screenHeight = tft.height();
-
-    int x0 = start.x + screenWidth / 2;
-    int y0 = start.y + screenHeight / 2;
-    int x1 = end.x + screenWidth / 2;
-    int y1 = end.y + screenHeight / 2;
-
-    int dx = abs(x1 - x0);
-    int dy = abs(y1 - y0);
-    int sx = (x0 < x1) ? 1 : -1;
-    int sy = (y0 < y1) ? 1 : -1;
-
-    if (dx > dy)
-    {
-        int err = dx / 2;
-        while (x0 != x1)
-        {
-            pointBuffer(Vertex3(x0, y0, 0));
-            if (x0 == x1 && y0 == y1)
-                break;
-            int e2 = err;
-            if (e2 > -dx)
-            {
-                err -= dy;
-                x0 += sx;
-            }
-            if (e2 < dy)
-            {
-                err += dx;
-                y0 += sy;
-            }
-        }
-    }
-    else
-    {
-        int err = dy / 2;
-        while (y0 != y1)
-        {
-            pointBuffer(Vertex3(x0, y0, 0));
-            if (x0 == x1 && y0 == y1)
-                break;
-            int e2 = err;
-            if (e2 > -dy)
-            {
-                err -= dx;
-                y0 += sy;
-            }
-            if (e2 < dx)
-            {
-                err += dy;
-                x0 += sx;
-            }
-        }
-    }
-} */
-
-/* void triangleBuffer(vector3 A, vector3 B, vector3 C, float angle)
-{
-    // Aplicar la rotación alrededor del eje z (plano xy) a cada vértice
-
-    lineBuffer(A, B);
-    lineBuffer(B, C);
-    lineBuffer(C, A);
-}
- */

@@ -6,7 +6,7 @@
 #include "matrixes.h"
 #include "uniform.h"
 
-std::vector<vector3> vertexes = {
+std::vector<vector3> vertexes; /* = {
     {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {-0.87f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.87f, -0.5f, 0.0f}, {0.0f, 0.0f, 1.0f},
 
     {0.0f, 1.0f, -1.0f},
@@ -14,7 +14,7 @@ std::vector<vector3> vertexes = {
     {-0.87f, -0.5f, -1.0f},
     {0.0f, 1.0f, 1.0f},
     {0.87f, -0.5f, -1.0f},
-    {1.0f, 0.0f, 1.0f}};
+    {1.0f, 0.0f, 1.0f}}; */
 Uniforms uniform;
 
 float angle = 3.14f / 3.0f;
@@ -25,26 +25,18 @@ void setup()
 {
   Serial.begin(115200);
   initBuffer();
-  /* tft.println("Leyendo tarjeta SD...");
+  tft.println("Leyendo tarjeta SD...");
   setupSD();
   tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-  loadOBJ("/only_body.obj", vertexes);
-  tft.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT)); */
+  loadOBJ("/cube.obj", vertexes);
   wWidth = tft.width();
   wHeight = tft.height();
-  /* uniform.model = createModelMatrix(vector3(0.0f, 0.0f, 0.0f), vector3(2.0f, 1.0f, 1.0f), vector3(0.0f, 1.0f, 0.0f), ((3.14f / 3.0f) + 1.0f));
-  printMatrix(uniform.model);
-  uniform.view = createViewMatrix();
-  printMatrix(uniform.view);
-  uniform.projection = createProjectionMatrix(1280, 1024);
-  printMatrix(uniform.projection);
-  uniform.viewport = createViewportMatrix(1280, 1024);
-  printMatrix(uniform.viewport); */
+
 }
 
 void loop()
 {
-  uniform.model = createModelMatrix(vector3(0.0f, 0.0f, 0.0f), vector3(2.0f, 1.0f, 1.0f), vector3(0.0f, 1.0f, 0.0f), angle++);
+  uniform.model = createModelMatrix(vector3(0.0f, 0.0f, 0.0f), vector3(0.65f, 0.7f, 0.7f), vector3(0.0f, 1.0f, 0.0f), angle+=2);
   uniform.view = createViewMatrix();
   uniform.projection = createProjectionMatrix(wWidth, wHeight);
   uniform.viewport = createViewportMatrix(wWidth, wHeight);
