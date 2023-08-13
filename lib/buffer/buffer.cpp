@@ -1,77 +1,52 @@
 #pragma once
 #include "buffer.h"
-#include "uniform.h"
-#include <stevesch-MathBase.h>
-#include <stevesch-MathVec.h>
-using stevesch::matrix4;
-using stevesch::vector4;
 
 Color clearColor(0, 0, 0);
 Color currentColor(0, 0, 0);
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite spr = TFT_eSprite(&tft);
 
-
 float counter = 0;
-
-vector3 rotateZ(vector3 vertex, float angle)
-{
-    matrix4 rotationZ;
-    rotationZ.zMatrix(angle);
-    vector4 rotatedZ = rotationZ * vector4(vertex.x, vertex.y, vertex.z, 1);
-    return vector3(rotatedZ.x, rotatedZ.y, rotatedZ.z);
-}
-
-vector3 rotateY(vector3 vertex, float angle)
-{
-    matrix4 rotationY;
-    rotationY.yMatrix(angle);
-    vector4 rotatedY = rotationY * vector4(vertex.x, vertex.y, vertex.z, 1);
-    return vector3(rotatedY.x, rotatedY.y, rotatedY.z);
-}
-
-vector3 rotateX(vector3 vertex, float angle)
-{
-    matrix4 rotationX;
-    rotationX.xMatrix(angle);
-    vector4 rotatedX = rotationX * vector4(vertex.x, vertex.y, vertex.z, 1);
-    return vector3(rotatedX.x, rotatedX.y, rotatedX.z);
-}
 
 void clearBuffer()
 {
     spr.fillSprite(clearColor.toHex());
 }
 
-void renderBuffer(const std::vector<vector3> &vertices)
+void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u)
 {
+    std::vector<Vertex> transformedVertices;
+
     clearBuffer();
-    /* for(int i = 0; i < vertices.size(); i = i + 3){
-        triangleBuffer(vertices.at(i)*20 + vector3(counter, counter, 0), vertices.at(i+1)*20 + vector3(counter, counter, 0), vertices.at(i+2)*20 + vector3(counter, counter, 0));
-    }
-    counter++; */
-
-    counter += 0.1; // Puedes ajustar el valor para cambiar la velocidad de rotación
-    if(counter >= PI*2){
-        counter = 0;
-    }
-
-    for (int i = 0; i < vertices.size(); i += 3)
-    {
-        triangleBuffer(
-            vertices.at(i) * 8,
-            vertices.at(i + 1) * 8,
-            vertices.at(i + 2) * 8,
-            counter // Pasar el ángulo actual de rotación
-        );
-    }
-
-    Uniforms uniforms;
 
     // 1. Vertex Shader
+    for (int i = 0; i < vertices.size(); i += 2)
+    {
+        vector3 v = vertices[i];
+        vector3 c = vertices[i + 1];
+
+        Vertex vertex = {v, Color(c.x, c.y, c.z)};
+        Vertex transformedVertex = vertexShader(vertex, u);
+        transformedVertices.push_back(transformedVertex);
+    }
+
     // 2. Primitive Assembly
-    // 3. Rasterization
+    std::vector<std::vector<Vertex>> triangles = primitiveAssembly(transformedVertices);
+
+    transformedVertices.clear();
+    transformedVertices.shrink_to_fit();
+
+    //3. Rasterization
+    std::vector<Fragment> fragments = rasterize(triangles);
+
+    triangles.clear();
+    triangles.shrink_to_fit();
+
     // 4. Fragment Shader
+    for(Fragment fragment: fragments){
+        pointBuffer(fragment);
+    };
+
     spr.pushSprite(0, 0);
 }
 
@@ -83,14 +58,15 @@ void initBuffer()
     spr.createSprite(tft.width(), tft.height());
 }
 
-void pointBuffer(const Vertex3 &vertex)
+void pointBuffer(const Fragment &f)
 {
-    int x = static_cast<int>(vertex.x);
-    int y = static_cast<int>(vertex.y);
-    int z = static_cast<int>(vertex.z);
+    int x = static_cast<int>(f.position.x);
+    int y = static_cast<int>(f.position.y);
+    int z = static_cast<int>(f.position.z);
 
     if (x >= 0 && x < static_cast<int>(spr.width()) && y >= 0 && y < static_cast<int>(spr.height()))
     {
+        setCurrentColorBuffer(f.color);
         spr.drawPixel(x, y, currentColor.toHex());
     }
 }
@@ -105,7 +81,7 @@ void setCurrentColorBuffer(Color newColor)
     currentColor = newColor;
 }
 
-void lineBuffer(vector3 start, vector3 end)
+/* void lineBuffer(vector3 start, vector3 end)
 {
     int screenWidth = tft.width();
     int screenHeight = tft.height();
@@ -162,16 +138,14 @@ void lineBuffer(vector3 start, vector3 end)
             }
         }
     }
-}
+} */
 
-void triangleBuffer(vector3 A, vector3 B, vector3 C, float angle)
+/* void triangleBuffer(vector3 A, vector3 B, vector3 C, float angle)
 {
     // Aplicar la rotación alrededor del eje z (plano xy) a cada vértice
-    A = rotateX(A, angle);
-    B = rotateX(B, angle);
-    C = rotateX(C, angle);
 
     lineBuffer(A, B);
     lineBuffer(B, C);
     lineBuffer(C, A);
 }
+ */

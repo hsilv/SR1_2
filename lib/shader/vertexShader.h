@@ -2,9 +2,11 @@
 #define VERTEXSHADER_H
 #include <stevesch-MathBase.h>
 #include <stevesch-MathVec.h>
+#include "vertex3.h"
 #include "uniform.h"
 using stevesch::vector3;
+using stevesch::vector4;
 
-vector3 vertexShader(const vector3 &vertex, const Uniforms &uniforms);
+Vertex vertexShader(const Vertex &vertex, const Uniforms &uniforms);
 
 #endif

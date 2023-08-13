@@ -5,10 +5,17 @@
 #include <iostream>
 #include "vertex3.h"
 #include "color.h"
+#include "fragment.h"
+#include "rasterization.h"
 #include <TFT_eSPI.h>
+#include "uniform.h"
 #include <stevesch-MathBase.h>
 #include <stevesch-MathVec.h>
+#include "vertexShader.h"
+#include "assembly.h"
 using stevesch::vector3;
+using stevesch::matrix4;
+using stevesch::vector4;
 
 extern Color clearColor;
 extern Color currentColor;
@@ -21,7 +28,7 @@ struct Face {
 void clearBuffer();
 void renderBuffer(const std::vector<vector3>& vertices);
 void initBuffer();
-void pointBuffer(const Vertex3& vertex, size_t width, size_t height);
+void pointBuffer(const Fragment &f);
 void setClearColorBuffer(Color newColor);
 void setCurrentColorBuffer(Color newColor);
 void lineBuffer(vector3 start, vector3 end);
