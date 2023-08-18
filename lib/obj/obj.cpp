@@ -40,7 +40,7 @@ bool loadOBJ(const std::string &path, std::vector<vector3> &out_vertices)
         }
     }
 
-    if ((counterF * 4 * 3) >= 100000)
+    if ((counterF * 4 * 3) >= 30000)
     {
         Serial.println("Archivo demasiado grande");
         obj.close();

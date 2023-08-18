@@ -6,11 +6,8 @@ Color currentColor(0, 0, 0);
 TFT_eSPI tft = TFT_eSPI();
 TFT_eSprite spr = TFT_eSprite(&tft);
 
-int faceC = 0;
 
-float counter = 0;
-
-std::vector<std::vector<float>> zbuffer;
+std::array<std::array<uint16_t, 128>, 160> zbuffer;
 
 void clearBuffer()
 {
@@ -20,39 +17,32 @@ void clearBuffer()
 void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth, int wHeight)
 {
 
-    zbuffer = std::vector<std::vector<float>>(tft.height(), std::vector<float>(tft.width(), std::numeric_limits<float>::max()));
+    /* zbuffer = std::vector<std::vector<float>>(tft.height(), std::vector<float>(tft.width(), std::numeric_limits<float>::max())); */
 
     clearBuffer();
     for (int z = 0; z < vertices.size(); z += 3)
     {
         std::vector<Vertex> transformedVertices;
         transformedVertices.reserve(3);
-        /* Serial.printf("Triángulo número %i \n", z / 3); */
 
         for (int i = 0; i < 3; i += 1)
         {
             vector3 v = vertices[z + i];
-            vector3 c = vector3(1.0f, 0.0f, 0.0f);
+            vector3 c = vector3(1.0f, 1.0f, 1.0f);
 
-            if (i == 0)
-            {
+            /* if(i == 0){
                 c = vector3(1.0f, 0.0f, 0.0f);
-            }
-            else if (i == 1)
-            {
+            } else if(i == 1){
                 c = vector3(0.0f, 1.0f, 0.0f);
-            }
-            else if (i == 2)
-            {
+            } else if(i == 2) {
                 c = vector3(0.0f, 0.0f, 1.0f);
-            }
+            } */
 
             Vertex vertex = {v, Color(c.x, c.y, c.z)};
             Vertex transformedVertex = vertexShader(vertex, u);
             transformedVertices.push_back(transformedVertex);
-        }
 
-        /* Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT)); */
+        }
 
         std::vector<std::vector<Vertex>> triangles = primitiveAssembly(transformedVertices);
 
@@ -66,40 +56,12 @@ void renderBuffer(const std::vector<vector3> &vertices, Uniforms &u, int wWidth,
     }
 
     spr.pushSprite(0, 0);
-    /*  std::vector<Vertex> transformedVertices;
 
-     clearBuffer();
-
-     transformedVertices.reserve(vertices.size() / 2);
-
-     // 1. Vertex Shader
-     for (int i = 0; i < vertices.size(); i += 2)
-     {
-         vector3 v = vertices[i];
-         vector3 c = vertices[i + 1];
-
-         Vertex vertex = {v, Color(c.x, c.y, c.z)};
-         Vertex transformedVertex = vertexShader(vertex, u);
-         transformedVertices.push_back(transformedVertex);
-     }
-
-     Serial.printf("Memoria libre: %i \n", heap_caps_get_free_size(MALLOC_CAP_8BIT));
-
-     // 2. Primitive Assembly
-     std::vector<std::vector<Vertex>> triangles = primitiveAssembly(transformedVertices);
-
-     transformedVertices.clear();
-     transformedVertices.shrink_to_fit();
-
-     // 3. Rasterization
-     rasterize(triangles, pointBuffer);
-
-     triangles.clear();
-     triangles.shrink_to_fit(); */
-
-    zbuffer.clear();
-    zbuffer.shrink_to_fit();
-    /* zbuffer.clear(); */
+    for (int i = 0; i < zbuffer.size(); ++i) {
+        for (int j = 0; j < zbuffer[i].size(); ++j) {
+            zbuffer[i][j] = 65000;
+        }
+    }
 }
 
 void initBuffer()
@@ -108,6 +70,11 @@ void initBuffer()
     tft.setRotation(1);
     tft.fillScreen(TFT_BLACK);
     spr.createSprite(tft.width(), tft.height());
+     for (int i = 0; i < zbuffer.size(); ++i) {
+        for (int j = 0; j < zbuffer[i].size(); ++j) {
+            zbuffer[i][j] = 65000;
+        }
+    }
 }
 
 void pointBuffer(const Fragment &f)
@@ -117,10 +84,10 @@ void pointBuffer(const Fragment &f)
 
     if (x >= 0 && x < static_cast<int>(spr.width()) && y >= 0 && y < static_cast<int>(spr.height()))
     {
-        if (f.position.z < zbuffer[y][x])
+        if (f.position.z * 10 <= zbuffer[x][y])
         {
             spr.drawPixel(x, y, f.color.toHex());
-            zbuffer[y][x] = f.position.z;
+            zbuffer[x][y] = static_cast<uint16_t>(f.position.z * 10);
         }
     }
 }
