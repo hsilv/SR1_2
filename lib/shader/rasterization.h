@@ -10,6 +10,6 @@
 #include <stevesch-MathVec.h>
 #include <TFT_eSPI.h>
 
-std::vector<Fragment> rasterize(const std::vector<std::vector<Vertex>> &triangles, void (*func)(const Fragment &));
+std::vector<Fragment> rasterize(const std::vector<std::vector<Vertex>> &triangles, void (*func)(const Fragment &), bool (*check)(const vector3 &));
 
 #endif

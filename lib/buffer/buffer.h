@@ -29,6 +29,7 @@ void clearBuffer();
 void renderBuffer(const std::vector<vector3>& vertices, Uniforms &u, int wWidth, int wHeight);
 void initBuffer();
 void pointBuffer(const Fragment &f);
+bool checkFrag(const vector3 &f);
 void setClearColorBuffer(Color newColor);
 void setCurrentColorBuffer(Color newColor);
 void lineBuffer(vector3 start, vector3 end);

@@ -6,7 +6,7 @@
 #include "vertex3.h"
 using stevesch::vector3;
 
-void triangle(Vertex a, Vertex b, Vertex c, void (*func)(const Fragment &));
+void triangle(Vertex a, Vertex b, Vertex c, void (*func)(const Fragment &), bool (*check)(const vector3 &));
 vector3 barycentricCoordinates(const vector3& P, const vector3& A, const vector3& B, const vector3& C);
 
 #endif

@@ -1,22 +1,28 @@
 #include "triangle.h"
 
-vector3 L = {0.0f, 0.0f, 5.0f};
+vector3 L = {80.0f, 64.0f, 4000.0f};
 
-void triangle(Vertex a, Vertex b, Vertex c, void (*func)(const Fragment &))
+void triangle(Vertex a, Vertex b, Vertex c, void (*func)(const Fragment &), bool (*check)(const vector3 &))
 {
     vector3 A = a.position;
     vector3 B = b.position;
     vector3 C = c.position;
-    int counter = 0;
 
-    float minX = std::min(std::min(A.x, B.x), C.x);
-    float minY = std::min(std::min(A.y, B.y), C.y);
-    float maxX = std::max(std::max(A.x, B.x), C.x);
-    float maxY = std::max(std::max(A.y, B.y), C.y);
+    int minX = std::min(std::min(A.x, B.x), C.x);
+    int minY = std::min(std::min(A.y, B.y), C.y);
+    int maxX = std::max(std::max(A.x, B.x), C.x);
+    int maxY = std::max(std::max(A.y, B.y), C.y);
 
     vector3 normal = B - A;
-    normal = normal.cross((C - A));
-    normal = normal.normalize();
+    vector3 temp = C - A;
+    normal = normal.cross(temp);
+    if ((normal.x != abs(0.0f)) && (normal.y != abs(0.0f)) && (normal.z != abs(0.0f)))
+    {
+        normal = normal.normalize();
+    }
+    /* vector3 LightDir = L;
+    LightDir = LightDir.normalize();
+    float dot = abs(normal.dot(LightDir)) * 5; */
 
     for (float y = minY; y <= maxY; y++)
     {
@@ -39,12 +45,30 @@ void triangle(Vertex a, Vertex b, Vertex c, void (*func)(const Fragment &))
                 printVector(P, "Point"); */
                 /*                 Serial.printf("Color r:%i, g:%i , b:%i \n", color.getRed(), color.getGreen(), color.getBlue());
                  */
+                /* Serial.printf("Vector de luz x: %lf, y: %lf, z: %lf \n", L.x, L.y, L.z);
+                Serial.printf("Vector de Posición x: %lf, y: %lf, z: %lf \n", P.x, P.y, P.z); */
+                /* Serial.printf("L x: %lf, y: %lf, z: %lf \n", L.x, L.y, L.z);
+                Serial.printf("P x: %lf, y: %lf, z: %lf \n", P.x, P.y, P.z); */
                 vector3 LightDir = L-P;
-                LightDir = LightDir.normalize();
-                color = color * abs(normal.dot(LightDir))*3;
+                if ((LightDir.x != abs(0.0f)) && (LightDir.y != abs(0.0f)) && (LightDir.z != abs(0.0f)))
+                {
+                    LightDir = LightDir.normalize();
+                }
+                /*                 Serial.printf("LightDir x: %lf, y: %lf, z: %lf \n", LightDir.x, LightDir.y, LightDir.z);
+                 */
+                float dot = 1/* normal.dot(LightDir) */;
+                if (dot <= 0)
+                {
+                    /* color = Color(0.0f, 0.0f, 0.0f); */
+                }
+                else
+                {
+                    color = color * dot;
+                    func(Fragment{P, color})
+                    ;
+                }
                 /*                 Serial.printf("Color r:%i, g:%i , b:%i \n", color.getRed(), color.getGreen(), color.getBlue());
                  */
-                func(Fragment{P, color});
             }
         }
     }
